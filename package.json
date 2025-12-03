@@ -12,6 +12,9 @@
     "devDependencies": {
         "@babel/core": "^7.24.3",
         "@babel/helper-environment-visitor": "^7.22.20",
+        "@tailwindcss/forms": "^0.5.2",
+        "alpinejs": "^3.4.2",
+        "autoprefixer": "^10.4.2",
         "axios": "^1.13.2",
         "del": "^6.1.1",
         "gulp": "^5.0.1",
@@ -29,10 +32,11 @@
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "merge-stream": "^2.0.0",
-        "postcss": "^8.1.14",
+        "postcss": "^8.4.6",
         "prettier": "3.2.5",
         "prettier-plugin-tailwindcss": "^0.3.0",
         "sass": "^1.71.1",
+        "tailwindcss": "^3.1.0",
         "tailwindcss-themer": "^4.0.0"
     },
     "dependencies": {
