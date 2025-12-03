@@ -21,6 +21,7 @@
                     @foreach ($detail_pesanans as $i => $detail)
                         <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 shadow-inner" id="{{ $detail->id }}">
                             <div class="flex flex-col md:flex-row gap-6">
+                                <input type="hidden" name="id_detail[]" value="{{ $detail->id }}">
                                 <div class="flex-1">
                                     <label for="jenis_{{ $i }}" class="block text-gray-700 font-semibold mb-2">Jenis</label>
                                     <input type="text" name="jenis[]" id="jenis_{{ $i }}"

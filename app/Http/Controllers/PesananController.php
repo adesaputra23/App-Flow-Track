@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
 use App\Models\PesananDetail;
+use App\Models\Produksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -236,15 +237,22 @@ class PesananController extends Controller
                 return redirect()->back()->with('error', 'Jumlah dan jenis item tidak sesuai.');
             }
 
-            PesananDetail::where('id_pesanan', $id)->delete();
+            PesananDetail::where('id_pesanan', $id)->whereNotIn('id', $request->id_detail)->delete();
 
-            // Simpan banyak item sekaligus
             for ($i = 0; $i < $lenJenis; $i++) {
-                \App\Models\PesananDetail::create([
-                    'id_pesanan' => $pesanan->id,
-                    'jenis'      => $jenisArr[$i],
-                    'jumlah'     => $jumlahArr[$i],
-                ]);
+                if ($request->has('id_detail') && isset($request->id_detail[$i]) && !empty($request->id_detail[$i])) {
+                    \App\Models\PesananDetail::where('id', $request->id_detail[$i])
+                        ->update([
+                            'jenis' => $jenisArr[$i],
+                            'jumlah' => $jumlahArr[$i],
+                        ]);
+                } else {
+                    \App\Models\PesananDetail::create([
+                        'id_pesanan' => $pesanan->id,
+                        'jenis'      => $jenisArr[$i],
+                        'jumlah'     => $jumlahArr[$i],
+                    ]);
+                }
             }
 
             DB::commit();
