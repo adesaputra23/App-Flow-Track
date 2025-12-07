@@ -90,10 +90,20 @@ class ProduksiController extends Controller
             ]);
 
             $produksi = new Produksi();
-
+            $bahan_baku = BahanBaku::where('id', $request->id_bahan)->first();
+            
             if (isset($request->id)) {
                 $produksi = Produksi::where('id', $request->id)->first();
+                $bahan_baku->stok = (($bahan_baku->stok + $produksi->jumlah_bahan) - $request->jumlah_bahan);
+            }else{
+                $bahan_baku->stok = ($bahan_baku->stok - $request->jumlah_bahan);
             }
+
+            if ($bahan_baku->stok < 0) {
+                return redirect()->route('produksi.index')->with('error', 'Data Stok Bahan Baku '. $bahan_baku->nama_bahan. ' Tidak Tersedia.');
+            }
+
+            $bahan_baku->save(); 
 
             $produksi->kode = $request->kode;
             $produksi->id_detail_pesanan = $request->id_detail_pesanan;
@@ -199,6 +209,10 @@ class ProduksiController extends Controller
         if (!$produksi) {
             return response()->json(['error' => 'Data Produksi tidak ditemukan.'], 404);
         }
+
+        $bahan_baku = BahanBaku::where('id', $produksi->id_bahan_baku)->first();
+        $bahan_baku->stok = $bahan_baku->stok + $produksi->jumlah_bahan;
+        $bahan_baku->save();
 
         try {
             $produksi->delete();

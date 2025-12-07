@@ -75,7 +75,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/hapus/{id}', [App\Http\Controllers\ProduksiController::class, 'destroy'])->name('hapus');
         Route::get('/detail/{id}', [App\Http\Controllers\ProduksiController::class, 'show'])->name('detail');
     });
-    
+
+    // INSERT_YOUR_CODE
+    Route::prefix('hasil-produksi')->name('hasil-produksi.')->group(function () {
+        Route::get('/', [App\Http\Controllers\HasilProduksiController::class, 'index'])->name('index');
+        Route::get('/cetak', [App\Http\Controllers\HasilProduksiController::class, 'cetakPdf'])->name('cetak');
+    });
+
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });

@@ -237,7 +237,9 @@ class PesananController extends Controller
                 return redirect()->back()->with('error', 'Jumlah dan jenis item tidak sesuai.');
             }
 
-            PesananDetail::where('id_pesanan', $id)->whereNotIn('id', $request->id_detail)->delete();
+            if ($request->has('id_detail')) {
+                PesananDetail::where('id_pesanan', $id)->whereNotIn('id', $request->id_detail)->delete();
+            }
 
             for ($i = 0; $i < $lenJenis; $i++) {
                 if ($request->has('id_detail') && isset($request->id_detail[$i]) && !empty($request->id_detail[$i])) {
