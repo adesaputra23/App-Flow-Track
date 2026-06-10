@@ -77,6 +77,16 @@ Route::middleware('auth')->group(function () {
     });
 
     // INSERT_YOUR_CODE
+    Route::prefix('packing')->name('packing.')->group(function () {
+        Route::get('/', [App\Http\Controllers\PackingController::class, 'index'])->name('index');
+        Route::get('/tambah', [App\Http\Controllers\PackingController::class, 'create'])->name('tambah');
+        Route::post('/simpan', [App\Http\Controllers\PackingController::class, 'store'])->name('simpan');
+        Route::get('/edit/{id}', [App\Http\Controllers\PackingController::class, 'edit'])->name('edit');
+        Route::delete('/hapus/{id}', [App\Http\Controllers\PackingController::class, 'destroy'])->name('hapus');
+        Route::get('/detail/{id}', [App\Http\Controllers\PackingController::class, 'show'])->name('detail');
+    });
+
+    // INSERT_YOUR_CODE
     Route::prefix('hasil-produksi')->name('hasil-produksi.')->group(function () {
         Route::get('/', [App\Http\Controllers\HasilProduksiController::class, 'index'])->name('index');
         Route::get('/cetak', [App\Http\Controllers\HasilProduksiController::class, 'cetakPdf'])->name('cetak');

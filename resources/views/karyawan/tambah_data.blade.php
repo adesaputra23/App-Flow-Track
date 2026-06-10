@@ -27,8 +27,13 @@
                         value="{{ isset($data_karyawan) ? $data_karyawan->jabatan :  old('jabatan') }}">
                 </div>
                 <div class="mb-4">
+                    <label for="bagian" class="block text-sm font-medium text-gray-700 mb-1">Bagian</label>
+                    <input type="text" id="bagian" name="bagian" class="w-full p-2 border rounded" required
+                        value="{{ isset($data_karyawan) ? $data_karyawan->bagian :  old('bagian') }}">
+                </div>
+                <div class="mb-4">
                     <label for="no_meja" class="block text-sm font-medium text-gray-700 mb-1">No Meja</label>
-                    <input type="number" id="no_meja" name="no_meja" class="w-full p-2 border rounded" required
+                    <input type="number" id="no_meja" name="no_meja" class="w-full p-2 border rounded"
                         value="{{ isset($data_karyawan) ? $data_karyawan->no_meja : old('no_meja') }}">
                 </div>
                 <div class="mb-4">

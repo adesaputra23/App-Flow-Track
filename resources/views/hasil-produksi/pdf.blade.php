@@ -56,38 +56,52 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2">No</th>
-                <th rowspan="2">Kode</th>
-                <th rowspan="2">Instansi</th>
-                <th rowspan="2">Jenis</th>
-                <th rowspan="2">Jumlah</th>
-                <th colspan="2">Bahan Baku</th>
-                <th rowspan="2">Jam</th>
-                <th rowspan="2">Tanggal</th>
-                <th rowspan="2">Status</th>
-            </tr>
-            <tr>
-                <th>Nama</th>
-                <th>Jumlah</th>
+                <th>
+                    No
+                </th>
+                <th>
+                    Kode</th>
+                <th>
+                    Instansi</th>
+                <th>
+                    Jenis</th>
+                <th>
+                    Jumlah</th>
+                <th>
+                    Bahan Baku
+                </th>
+                <th>
+                    Jam</th>
+                <th>
+                    Tanggal</th>
+                <th>
+                    Petugas</th>
+                <th>
+                    Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($list_data as $i => $data)
                 <tr>
                     <td class="text-center">{{ $i + 1 }}</td>
-                    <td>{{ $data->kode }}</td>
-                    <td>
-                        {{ $data->detail_pesanan->pesanan->instansi ?? '-' }}
-                    </td>
-                    <td>{{ $data->detail_pesanan->jenis ?? '-' }}</td>
-                    <td class="text-center">{{ $data->detail_pesanan->jumlah ?? '-' }}</td>
-                    <td>{{ $data->bahan_baku->nama_bahan ?? '-' }}</td>
-                    <td class="text-center">{{ $data->jumlah_bahan ?? '-' }}</td>
-                    <td class="text-center">{{ $data->jam_produksi ?? '-' }}</td>
+                    <td class="text-center">{{ $data->kode }}</td>
+                    <td class="text-center">{{ $data->detail_pesanan->pesanan->instansi }}</td>
+                    <td class="text-center">{{ $data->detail_pesanan->jenis }}</td>
+                    <td class="text-center">{{ $data->detail_pesanan->jumlah }}</td>
                     <td class="text-center">
-                        {{ \Carbon\Carbon::parse($data->created_at)->format('Y-m-d') }}
+                        <ul class="">
+                            @forelse ($data->detail_bahan_baku as $key => $detail)
+                                <li>{{ $key + 1 }}. {{ $detail->bahan_baku->nama_bahan ?? '-' }} -
+                                    {{ $detail->jumlah_bahan }} {{ $detail->bahan_baku->satuan }}</li>
+                            @empty
+                                <li>-</li>
+                            @endforelse
+                        </ul>
                     </td>
-                    <td class="text-center">{{ $data->status_produksi ?? '-' }}</td>
+                    <td class="text-center">{{ $data->jam_produksi }}</td>
+                    <td class="text-center">{{ $data->created_at->format('Y-m-d') }}</td>
+                    <td class="text-center">{{ $data->karyawan->nama_lengkap ?? '-' }}</td>
+                    <td class="text-center">{{ $data->status_produksi }}</td>
                 </tr>
             @endforeach
         </tbody>

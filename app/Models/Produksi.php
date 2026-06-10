@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Produksi extends Model
 {
@@ -31,5 +32,15 @@ class Produksi extends Model
     public function bahan_baku()
     {
         return $this->belongsTo(BahanBaku::class, 'id_bahan_baku');
+    }
+
+    public function detail_bahan_baku()
+    {
+        return $this->hasMany(DetailProduksiBahanBaku::class, 'id_produksi', 'id');
+    }
+
+    public function karyawan()
+    {
+        return $this->belongsTo(\App\Models\Karyawan::class, 'p_jawab', 'id');
     }
 }

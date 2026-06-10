@@ -46,30 +46,29 @@
                     </select>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-4 div-bahan-baku">
                     <label for="id_bahan" class="block text-sm font-medium text-gray-700 mb-1">Bahan Produksi</label>
-                    <select id="id_bahan" name="id_bahan" class="w-full p-2 border rounded" required>
-                        @if (!isset($data_produksi))
-                            <option value="">Pilih Bahan Produksi</option>
-                        @endif
+                    <select id="id_bahan" name="id_bahan[]" class="w-full p-2 border rounded select2 bahan-baku" multiple="multiple" required>
                         @if(isset($bahan_list) && count($bahan_list) > 0)
                             @foreach($bahan_list as $bahan)
                                 <option value="{{ $bahan->id }}"
-                                    @if( (isset($data_produksi) && $data_produksi->id_bahan_baku == $bahan->id) || old('id_bahan') == $bahan->id )
+                                    @if(
+                                        (isset($data_produksi) && (
+                                            (is_array($data_produksi->id_bahan_baku ?? null) && in_array($bahan->id, $data_produksi->id_bahan_baku))
+                                            || (!is_array($data_produksi->id_bahan_baku ?? null) && $data_produksi->id_bahan_baku == $bahan->id)
+                                        ))
+                                        || (is_array(old('id_bahan')) && in_array($bahan->id, old('id_bahan')))
+                                        || (isset($detail_bahan_baku) && in_array($bahan->id, (array) $detail_bahan_baku))
+                                    )
                                         selected
                                     @endif
                                 >
                                     {{ $bahan->nama_bahan ?? 'Bahan ' . $bahan->id }}
                                 </option>
+                           
                             @endforeach
                         @endif
                     </select>
-                </div>
-
-                <div class="mb-4">
-                    <label for="jumlah_bahan" class="block text-sm font-medium text-gray-700 mb-1">Jumlah Bahan</label>
-                    <input type="number" min="1" id="jumlah_bahan" name="jumlah_bahan" class="w-full p-2 border rounded" required
-                        value="{{ isset($data_produksi) ? $data_produksi->jumlah_bahan : old('jumlah_bahan') }}">
                 </div>
 
                 <div class="mb-4">
@@ -89,6 +88,29 @@
                     <input type="time" id="jam_produksi" name="jam_produksi" class="w-full p-2 border rounded" readonly 
                         value="{{ date('H:i') }}">
                 </div>
+
+                <div class="mb-4">
+                    <label for="id_petugas" class="block text-sm font-medium text-gray-700 mb-1">Petugas</label>
+                    <select id="id_petugas" name="id_petugas" class="w-full p-2 border rounded" required>
+                        <option value="">Pilih Petugas</option>
+                        @if(isset($karyawan_list) && count($karyawan_list) > 0)
+                            @foreach($karyawan_list as $karyawan)
+                                <option value="{{ $karyawan->id }}"
+                                    @if(
+                                        (isset($data_produksi) && $data_produksi->p_jawab == $karyawan->id)
+                                        || (old('id_petugas') == $karyawan->id)
+                                    )
+                                        selected
+                                    @endif
+                                >
+                                    {{ $karyawan->nama_lengkap ?? 'Petugas ' . $karyawan->id }}
+                                </option>
+                           
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+           
 
                 <div class="mb-4">
                     <label for="status_produksi" class="block text-sm font-medium text-gray-700 mb-1">Status Produksi</label>
@@ -116,4 +138,71 @@
 @endsection
 
 @section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('.select2').select2({
+            placeholder: "Pilih Bahan Produksi",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+
+    // INSERT_YOUR_CODE
+    // Mendapatkan data yang dipilih pada elemen .select2
+    function getSelectedBahan() {
+        var selected = $('.select2').val();
+        var selectedTexts = [];
+        $('.select2 option:selected').each(function() {
+            selectedTexts.push($(this).text());
+        });
+    $(document).ready(function() {
+        var selectedValues = $('.select2').val();
+        // Hapus field jumlah yang sudah ada agar tidak duplikat
+        $("[id^='input-jumlah-']").remove();
+
+        if(selectedValues && selectedValues.length > 0) {
+            selectedValues.forEach(function(val) {
+                var optionText = $('.select2').find("option[value='" + val + "']").text();
+                var jumlahVal = '';
+                @if(isset($data_produksi) && isset($data_produksi->detail_bahan_baku))
+                    let detail = @json($data_produksi->detail_bahan_baku->keyBy('id_bahan_baku'));
+                    if(detail[val]) {
+                        jumlahVal = detail[val].jumlah_bahan;
+                    }
+                @endif
+                var html = `
+                    <div class="mb-4" id="input-jumlah-${val}">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah untuk ${optionText}</label>
+                        <input type="number" name="jumlah_bahan[${val}]" min="0" step="any" class="w-full p-2 border rounded" required value="` + (jumlahVal ? jumlahVal : '') + `">
+                    </div>
+                `;
+                $(html).insertAfter($('.div-bahan-baku').first());
+            });
+        }
+    });
+        
+    }
+    getSelectedBahan();
+
+    $('.select2').on('select2:select', function (e) {
+        var selectedValue = $(this).val();
+        var selectedText = $(this).find("option:selected").text();
+        $("[id^='input-jumlah-']").remove();
+
+        // Untuk setiap bahan yang dipilih (bisa multiple select), tambahkan field jumlah
+        var selectedValues = $(this).val();
+        if(selectedValues && selectedValues.length > 0) {
+            selectedValues.forEach(function(val) {
+                var optionText = $(e.target).find("option[value='" + val + "']").text();
+                var html = `
+                    <div class="mb-4" id="input-jumlah-${val}">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah untuk ${optionText}</label>
+                        <input type="number" name="jumlah_bahan[${val}]" min="0" step="any" class="w-full p-2 border rounded" required>
+                    </div>
+                `;
+                $(html).insertAfter($('.div-bahan-baku').first());
+            });
+        }
+    });
+</script>
 @endsection

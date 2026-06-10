@@ -39,8 +39,8 @@
                             Satuan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
                             Stok</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
-                            Harga Standar</th>
+                        {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
+                            Harga Standar</th> --}}
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
                             Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
@@ -54,7 +54,7 @@
                             <td class="px-6 py-4 border border-gray-300">{{ $bahan_baku->nama_bahan }}</td>
                             <td class="px-6 py-4 border border-gray-300">{{ $bahan_baku->satuan }}</td>
                             <td class="px-6 py-4 border border-gray-300">{{ $bahan_baku->stok }}</td>
-                            <td class="px-6 py-4 border border-gray-300 text-center">{{ $bahan_baku->harga_standar }}</td>
+                            {{-- <td class="px-6 py-4 border border-gray-300 text-center">{{ $bahan_baku->harga_standar }}</td> --}}
                             <td class="px-6 py-4 border border-gray-300">{{ $bahan_baku->aktif == 1 ? 'aktif' : 'non aktif' }}</td>
                             <td class="px-6 py-4 border border-gray-300 text-center">
                                 <a href="{{ route('bahan.baku.edit', $bahan_baku->id) }}"

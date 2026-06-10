@@ -35,11 +35,11 @@
                     <input type="number" id="stok" name="stok" class="w-full p-2 border rounded" required
                         value="{{ isset($data_bahan) ? $data_bahan->stok :  old('stok') }}">
                 </div>
-                <div class="mb-4">
+                {{-- <div class="mb-4">
                     <label for="harga_standar" class="block text-sm font-medium text-gray-700 mb-1">Harga Standar</label>
                     <input type="number" id="harga_standar" name="harga_standar" class="w-full p-2 border rounded" required
                         value="{{ isset($data_bahan) ? $data_bahan->harga_standar : old('harga_standar') }}">
-                </div>
+                </div> --}}
                 <div class="mb-4">
                     <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                     <textarea id="deskripsi" name="deskripsi" class="w-full p-2 border rounded" rows="3" required>{{ isset($data_bahan) ? $data_bahan->deskripsi : old('deskripsi') }}</textarea>

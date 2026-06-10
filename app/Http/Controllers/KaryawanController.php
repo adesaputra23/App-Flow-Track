@@ -68,7 +68,8 @@ class KaryawanController extends Controller
             $request->validate([
                 'nama' => 'required|string|max:255',
                 'jabatan' => 'required|string|max:255',
-                'no_meja' => 'required|string',
+                'bagian' => 'required|string|max:255',
+                // 'no_meja' => 'required|string',
                 'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
                 'no_hp' => 'required|string|max:20',
                 'status_karyawan' => 'required|in:tetaP,kontrak,tetap,kontrak',
@@ -85,7 +86,8 @@ class KaryawanController extends Controller
             $karyawan->nama_lengkap = $request->nama;
             $karyawan->email = $request->email;
             $karyawan->jabatan = $request->jabatan;
-            $karyawan->no_meja = $request->no_meja;
+            $karyawan->bagian = $request->bagian;
+            $karyawan->no_meja = $request->no_meja ?? null;
             $karyawan->status = $request->status_karyawan;
             $karyawan->no_hp = $request->no_hp;
             $karyawan->jenis_kelamin = $request->jenis_kelamin;

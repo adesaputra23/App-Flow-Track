@@ -6,7 +6,7 @@
          <div class="m-header items-center py-4 px-6 h-header-height">
              <a href="../dashboard/index.html" class="b-brand flex items-center gap-3">
                  <!-- ========   Change your logo from here   ============ -->
-                 <span class="text-2xl font-bold text-white">APP FLOW TRACK</span>
+                 <span class="text-2xl font-bold text-white">APP MONITORING</span>
              </a>
          </div>
          <hr>
@@ -82,7 +82,13 @@
                  <li class="pc-item pc-hasmenu">
                      <a href="{{ route('produksi.index') }}" class="pc-link">
                          <span class="pc-micon"> <i data-feather="codepen"></i></span>
-                         <span class="pc-mtext">Proses Produksi</span>
+                         <span class="pc-mtext">Proses Linting</span>
+                     </a>
+                 </li>
+                 <li class="pc-item pc-hasmenu">
+                     <a href="{{ route('packing.index') }}" class="pc-link">
+                         <span class="pc-micon"> <i data-feather="codepen"></i></span>
+                         <span class="pc-mtext">Proses Packing</span>
                      </a>
                  </li>
 

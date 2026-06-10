@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" id="main-style-link" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.3/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.5/css/dataTables.dataTables.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet"/>
 
 </head>
 
@@ -114,6 +115,8 @@
     <script src="{{ asset('assets/js/plugins/wow.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.3/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.5/js/dataTables.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
 
     <div class="floting-button fixed bottom-[50px] right-[30px] z-[1030]">
     </div>

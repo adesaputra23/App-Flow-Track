@@ -24,14 +24,14 @@ class ProduksiController extends Controller
         $this->breadcrumdData = [
             [
                 'url' => '/produksi',
-                'nama' => 'Procses Produksi'
+                'nama' => 'Proceess Linting'
             ]
         ];
     }
 
     public function index()
     {
-        $list_data = Produksi::with('bahan_baku')->with(['detail_pesanan' => function($query){
+        $list_data = Produksi::with('bahan_baku', 'detail_bahan_baku')->with(['detail_pesanan' => function ($query) {
             return $query->with('pesanan');
         }])->get();
         $data = [
@@ -53,17 +53,20 @@ class ProduksiController extends Controller
             'nama' => 'Tambah Data Produksi'
         ];
 
-        $random_kode = 'PRD-' . rand(100000, 999999);
+        $random_kode = 'LNT-' . rand(100000, 999999);
         $produksi_ids = Produksi::pluck('id_detail_pesanan')->toArray();
-        $detail_pesanan_list = PesananDetail::when(!empty($produksi_ids), function($query) use ($produksi_ids) {
+        $detail_pesanan_list = PesananDetail::when(!empty($produksi_ids), function ($query) use ($produksi_ids) {
             return $query->whereNotIn('id', $produksi_ids);
         })->with('pesanan')->get();
         $bahan_list = BahanBaku::get();
+        $karyawan_list = \App\Models\Karyawan::where('no_meja', '!=', null)->get();
+   
         $data = [
             'breadcrumd_data' => $this->breadcrumdData,
             'random_kode' => $random_kode,
             'detail_pesanan_list' => $detail_pesanan_list,
-            'bahan_list' => $bahan_list
+            'bahan_list' => $bahan_list,
+            'karyawan_list' => $karyawan_list
         ];
         return view('produksi.tambah-data', $data);
     }
@@ -81,8 +84,6 @@ class ProduksiController extends Controller
             $request->validate([
                 'kode' => 'required|string|max:255',
                 'id_detail_pesanan' => 'required|integer',
-                'id_bahan' => 'required|integer',
-                'jumlah_bahan' => 'required|integer',
                 'jumlah_gagal_produksi' => 'required|integer',
                 'tanggal' => 'required|date',
                 'jam_produksi' => 'required',
@@ -90,30 +91,52 @@ class ProduksiController extends Controller
             ]);
 
             $produksi = new Produksi();
-            $bahan_baku = BahanBaku::where('id', $request->id_bahan)->first();
-            
             if (isset($request->id)) {
                 $produksi = Produksi::where('id', $request->id)->first();
-                $bahan_baku->stok = (($bahan_baku->stok + $produksi->jumlah_bahan) - $request->jumlah_bahan);
-            }else{
-                $bahan_baku->stok = ($bahan_baku->stok - $request->jumlah_bahan);
             }
-
-            if ($bahan_baku->stok < 0) {
-                return redirect()->route('produksi.index')->with('error', 'Data Stok Bahan Baku '. $bahan_baku->nama_bahan. ' Tidak Tersedia.');
-            }
-
-            $bahan_baku->save(); 
-
             $produksi->kode = $request->kode;
             $produksi->id_detail_pesanan = $request->id_detail_pesanan;
-            $produksi->id_bahan_baku = $request->id_bahan;
-            $produksi->jumlah_bahan = $request->jumlah_bahan;
             $produksi->jumlah_batang_gagal_produksi = $request->jumlah_gagal_produksi;
             $produksi->tanggal = $request->tanggal;
             $produksi->jam_produksi = $request->jam_produksi;
             $produksi->status_produksi = $request->status_produksi;
+            $produksi->p_jawab = $request->id_petugas;
             $produksi->save();
+
+            if ($request->has('id_bahan') && is_array($request->id_bahan)) {
+
+                $cekData = DB::table('detail_produksi_bahan_baku')
+                    ->where('id_produksi', $produksi->id)
+                    ->get();
+
+                if ($cekData) {
+                    DB::table('detail_produksi_bahan_baku')
+                        ->where('id_produksi', $produksi->id)
+                        ->delete();
+                }
+
+                foreach ($request->id_bahan as $id_bahan) {
+                    DB::table('detail_produksi_bahan_baku')->insert([
+                        'id_produksi' => $produksi->id,
+                        'id_bahan_baku' => $id_bahan,
+                        'jumlah_bahan' => isset($request->jumlah_bahan[$id_bahan]) ? $request->jumlah_bahan[$id_bahan] : 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    $bahan_baku = BahanBaku::where('id', $id_bahan)->first();
+                    if (isset($request->id)) {
+                        $bahan_baku->stok = (($bahan_baku->stok + $produksi->jumlah_bahan) - $request->jumlah_bahan[$id_bahan]);
+                    }else{
+                        $bahan_baku->stok = ($bahan_baku->stok - $request->jumlah_bahan[$id_bahan]);
+                    }
+
+                    if ($bahan_baku->stok < 0) {
+                        return redirect()->route('produksi.index')->with('error', 'Data Stok Bahan Baku '. $bahan_baku->nama_bahan. ' Tidak Tersedia.');
+                    }
+
+                    $bahan_baku->save(); 
+                }
+            }
 
             DB::commit();
 
@@ -141,7 +164,7 @@ class ProduksiController extends Controller
             'nama' => 'Detail Item Produksi'
         ];
 
-        $produksi = Produksi::with('bahan_baku')->with(['detail_pesanan' => function($query){
+        $produksi = Produksi::with('bahan_baku')->with(['detail_pesanan' => function ($query) {
             return $query->with('pesanan');
         }])->where('id', $id)->first();
 
@@ -166,21 +189,27 @@ class ProduksiController extends Controller
             'nama' => 'Tambah Data Produksi'
         ];
 
-        $data_produksi = Produksi::where('id', $id)->first();
+        $data_produksi = Produksi::with('detail_bahan_baku')->where('id', $id)->first();
         $random_kode = 'PRD-' . rand(100000, 999999);
         $produksi_ids = Produksi::where('id', $id)->pluck('id_detail_pesanan')->toArray();
-        $detail_pesanan_list = PesananDetail::when(!empty($produksi_ids), function($query) use ($produksi_ids) {
+        $detail_pesanan_list = PesananDetail::when(!empty($produksi_ids), function ($query) use ($produksi_ids) {
             return $query->whereIn('id', $produksi_ids);
         })->with('pesanan')->get();
         $bahan_list = BahanBaku::get();
+        $karyawan_list = \App\Models\Karyawan::where('no_meja', '!=', null)->get();
+        // INSERT_YOUR_CODE
+        $detail_bahan_baku = \App\Models\DetailProduksiBahanBaku::where('id_produksi', $id)->pluck('id_bahan_baku')->toArray();
 
         $data = [
             'breadcrumd_data' => $this->breadcrumdData,
             'random_kode' => $random_kode,
             'detail_pesanan_list' => $detail_pesanan_list,
             'bahan_list' => $bahan_list,
-            'data_produksi' => $data_produksi
+            'data_produksi' => $data_produksi,
+            'karyawan_list' => $karyawan_list,
+            'detail_bahan_baku' => $detail_bahan_baku
         ];
+        // dd($data);
         return view('produksi.tambah-data', $data);
     }
 
@@ -204,21 +233,29 @@ class ProduksiController extends Controller
      */
     public function destroy($id)
     {
-        $produksi = Produksi::find($id);
-
-        if (!$produksi) {
-            return response()->json(['error' => 'Data Produksi tidak ditemukan.'], 404);
-        }
-
-        $bahan_baku = BahanBaku::where('id', $produksi->id_bahan_baku)->first();
-        $bahan_baku->stok = $bahan_baku->stok + $produksi->jumlah_bahan;
-        $bahan_baku->save();
-
+        DB::beginTransaction();
         try {
+            $produksi = Produksi::with('detail_bahan_baku')->find($id);
+            if (!$produksi) {
+                return response()->json(['error' => 'Data Produksi tidak ditemukan.'], 404);
+            }
+            foreach ($produksi->detail_bahan_baku as $key => $value) {
+                $bahan_baku = BahanBaku::where('id', $value->id_bahan_baku)->first();
+                $bahan_baku->stok = $bahan_baku->stok + $value->jumlah_bahan;
+                $bahan_baku->save();
+                $value->delete();
+            }
             $produksi->delete();
+       
+            DB::commit();
             return response()->json(['success' => true, 'message' => 'Produksi berhasil dihapus.']);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Terjadi kesalahan saat menghapus data.'], 500);
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat menghapus data.',
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ], 500);
+            DB::rollBack();
         }
     }
 }

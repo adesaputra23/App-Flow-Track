@@ -71,7 +71,7 @@ class BahanBakuController extends Controller
                 'nama_bahan' => 'required|string|max:255',
                 'satuan' => 'required|string|max:255',
                 'stok' => 'required|integer',
-                'harga_standar' => 'required|integer',
+                // 'harga_standar' => 'required|integer',
                 'deskripsi' => 'required|string',
                 'status' => 'required|string',
             ]);
@@ -87,7 +87,7 @@ class BahanBakuController extends Controller
             $bahan_baku->nama_bahan = $request->nama_bahan;
             $bahan_baku->satuan = $request->satuan;
             $bahan_baku->stok = (int) str_replace(',', '', $request->stok);
-            $bahan_baku->harga_standar = (int) str_replace(',', '', $request->harga_standar);
+            // $bahan_baku->harga_standar = (int) str_replace(',', '', $request->harga_standar);
             $bahan_baku->deskripsi = $request->deskripsi;
             $bahan_baku->aktif = $request->status === 'aktif' ? 1 : 2;
             $bahan_baku->save();
