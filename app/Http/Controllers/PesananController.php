@@ -120,7 +120,6 @@ class PesananController extends Controller
         ];
 
         return view('pesanan.detail', $data);
-
     }
 
     /**
@@ -219,6 +218,10 @@ class PesananController extends Controller
                 'jenis.*' => 'required|string|max:255',
                 'jumlah'   => 'required|array',
                 'jumlah.*' => 'required|integer|min:1',
+                'gambar'   => 'nullable|array',
+                'gambar.*' => 'nullable|image|max:2048',
+                'satuan'   => 'required|array',
+                'satuan.*' => 'required|string|max:50',
             ]);
 
             // Ambil model pesanan
@@ -230,6 +233,8 @@ class PesananController extends Controller
             // Pastikan count item sesuai antara jenis dan jumlah
             $jenisArr = $request->input('jenis', []);
             $jumlahArr = $request->input('jumlah', []);
+            $gambarArr = $request->file('gambar', []);
+            $satuanArr = $request->input('satuan', []);
             $lenJenis = count($jenisArr);
             $lenJumlah = count($jumlahArr);
 
@@ -242,18 +247,40 @@ class PesananController extends Controller
             }
 
             for ($i = 0; $i < $lenJenis; $i++) {
+                $gambarPath = null;
+                if (isset($gambarArr[$i]) && is_a($gambarArr[$i], \Illuminate\Http\UploadedFile::class)) {
+                    $dir = storage_path('app/public/pesanan_gambar');
+                    if (!\Illuminate\Support\Facades\File::exists($dir)) {
+                        \Illuminate\Support\Facades\File::makeDirectory($dir, 0777, true, true);
+                    }
+                    $gambarPath = $gambarArr[$i]->store('pesanan_gambar', 'public');
+                }
+
                 if ($request->has('id_detail') && isset($request->id_detail[$i]) && !empty($request->id_detail[$i])) {
-                    \App\Models\PesananDetail::where('id', $request->id_detail[$i])
-                        ->update([
-                            'jenis' => $jenisArr[$i],
-                            'jumlah' => $jumlahArr[$i],
-                        ]);
+                    $detail = \App\Models\PesananDetail::find($request->id_detail[$i]);
+                    if ($detail) {
+                        $updateData = [
+                            'jenis'     => $jenisArr[$i],
+                            'jumlah'    => $jumlahArr[$i],
+                            'satuan'    => $satuanArr[$i],
+                        ];
+                        if ($gambarPath) {
+                            $updateData['image'] = basename($gambarPath);
+                        }
+                        $detail->update($updateData);
+                    }
+                    // dd($detail);
                 } else {
-                    \App\Models\PesananDetail::create([
+                    $insertData = [
                         'id_pesanan' => $pesanan->id,
                         'jenis'      => $jenisArr[$i],
                         'jumlah'     => $jumlahArr[$i],
-                    ]);
+                        'satuan'     => $satuanArr[$i],
+                    ];
+                    if ($gambarPath) {
+                        $insertData['image'] = basename($gambarPath);
+                    }
+                    \App\Models\PesananDetail::create($insertData);
                 }
             }
 

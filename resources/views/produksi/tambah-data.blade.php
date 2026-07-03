@@ -79,7 +79,7 @@
 
                 <div class="mb-4">
                     <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-                    <input type="date" id="tanggal" name="tanggal" class="w-full p-2 border rounded" required readonly
+                    <input type="date" id="tanggal" name="tanggal" class="w-full p-2 border rounded" required
                         value="{{ isset($data_produksi) ? $data_produksi->tanggal : old('tanggal', date('Y-m-d')) }}">
                 </div>
 

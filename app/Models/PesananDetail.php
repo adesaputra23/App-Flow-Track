@@ -16,6 +16,8 @@ class PesananDetail extends Model
         'id_pesanan',
         'jenis',
         'jumlah',
+        'image',
+        'satuan',
     ];
 
     public function pesanan()

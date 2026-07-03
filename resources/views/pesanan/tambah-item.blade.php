@@ -14,37 +14,77 @@
                 </div>
             @endif
 
-            <form action="{{ route('pesanan.simpan.item', $pesanan->id) }}" method="POST">
+            <form action="{{ route('pesanan.simpan.item', $pesanan->id) }}" method="POST" enctype="multipart/form-data">
+
                 @csrf
 
                 @if (isset($detail_pesanans) && count($detail_pesanans) > 0)
                     @foreach ($detail_pesanans as $i => $detail)
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 shadow-inner" id="{{ $detail->id }}">
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 shadow-inner"
+                            id="{{ $detail->id }}">
                             <div class="flex flex-col md:flex-row gap-6">
                                 <input type="hidden" name="id_detail[]" value="{{ $detail->id }}">
                                 <div class="flex-1">
-                                    <label for="jenis_{{ $i }}" class="block text-gray-700 font-semibold mb-2">Jenis</label>
+                                    <label for="jenis_{{ $i }}"
+                                        class="block text-gray-700 font-semibold mb-2">Jenis</label>
                                     <input type="text" name="jenis[]" id="jenis_{{ $i }}"
                                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        value="{{ old('jenis.' . $i, $detail->jenis) }}"
-                                        required>
+                                        value="{{ old('jenis.' . $i, $detail->jenis) }}" required>
                                     @error('jenis.' . $i)
                                         <span class="text-red-600 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="flex-1">
-                                    <label for="jumlah_{{ $i }}" class="block text-gray-700 font-semibold mb-2">Jumlah</label>
+                                    <label for="jumlah_{{ $i }}"
+                                        class="block text-gray-700 font-semibold mb-2">Jumlah</label>
                                     <input type="number" name="jumlah[]" id="jumlah_{{ $i }}" min="1"
                                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        value="{{ old('jumlah.' . $i, $detail->jumlah) }}"
-                                        required>
+                                        value="{{ old('jumlah.' . $i, $detail->jumlah) }}" required>
                                     @error('jumlah.' . $i)
                                         <span class="text-red-600 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <div class="flex-1">
+                                    <label for="gambar_{{ $i }}"
+                                        class="block text-gray-700 font-semibold mb-2">Gambar (opsional)</label>
+                                    <input type="file" name="gambar[]" id="gambar_{{ $i }}"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        accept="image/*">
+                                    @if (isset($detail->gambar) && $detail->gambar)
+                                        <div class="mt-2">
+                                            <img src="{{ asset('storage/' . $detail->gambar) }}" alt="Gambar Item"
+                                                class="h-16 rounded border">
+                                        </div>
+                                    @endif
+                                    @error('gambar.' . $i)
+                                        <span class="text-red-600 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="flex-1">
+                                    <label for="satuan_{{ $i }}"
+                                        class="block text-gray-700 font-semibold mb-2">Satuan</label>
+                                    <select name="satuan[]" id="satuan_{{ $i }}"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        required>
+                                        <option value="bal"
+                                            {{ old('satuan.' . $i, $detail->satuan ?? '') == 'bal' ? 'selected' : '' }}>
+                                            Bal</option>
+                                        <option value="box"
+                                            {{ old('satuan.' . $i, $detail->satuan ?? '') == 'box' ? 'selected' : '' }}>
+                                            Box</option>
+                                    </select>
+                                    @error('satuan.' . $i)
+                                        <span class="text-red-600 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+
                             </div>
                             <div class="flex mt-4 justify-end">
-                                <button type="button" data-id="{{ $detail->id }}" class="btn-remove-item-detail bg-red-600 text-white px-2 py-1 text-sm rounded hover:bg-red-700 transition-colors duration-150" style="background-color: #dc2626;">
+                                <button type="button" data-id="{{ $detail->id }}"
+                                    class="btn-remove-item-detail bg-red-600 text-white px-2 py-1 text-sm rounded hover:bg-red-700 transition-colors duration-150"
+                                    style="background-color: #dc2626;">
                                     Hapus Item
                                 </button>
                             </div>
@@ -68,6 +108,35 @@
                                     class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                     value="{{ old('jumlah.0') }}" required>
                                 @error('jumlah.0')
+                                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="flex-1">
+                                <label for="gambar_0" class="block text-gray-700 font-semibold mb-2">Gambar
+                                    (opsional)</label>
+                                <input type="file" name="gambar[]" id="gambar_0"
+                                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    accept="image/*">
+                                @if (old('gambar.0'))
+                                    <div class="mt-2">
+                                        <img src="{{ asset('storage/' . old('gambar.0')) }}" alt="Gambar Item"
+                                            class="h-16 rounded border">
+                                    </div>
+                                @endif
+                                @error('gambar.0')
+                                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="flex-1">
+                                <label for="satuan_0" class="block text-gray-700 font-semibold mb-2">Satuan</label>
+                                <select name="satuan[]" id="satuan_0"
+                                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    required>
+                                    <option value="">Pilih Satuan</option>
+                                    <option value="bal" {{ old('satuan.0') == 'bal' ? 'selected' : '' }}>Bal</option>
+                                    <option value="box" {{ old('satuan.0') == 'box' ? 'selected' : '' }}>Box</option>
+                                </select>
+                                @error('satuan.0')
                                     <span class="text-red-600 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -122,6 +191,18 @@
                                     <label for="jumlah" class="block text-gray-700 font-semibold mb-2">Jumlah</label>
                                     <input type="number" name="jumlah[]" min="1" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
                                 </div>
+                                <div class="flex-1">
+                                    <label for="gambar" class="block text-gray-700 font-semibold mb-2">Gambar</label>
+                                    <input type="file" name="gambar[]" accept="image/*" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                </div>
+                                <div class="flex-1">
+                                    <label for="satuan" class="block text-gray-700 font-semibold mb-2">Satuan</label>
+                                    <select name="satuan[]" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                                        <option value="" disabled selected>Pilih Satuan</option>
+                                        <option value="bal">Bal</option>
+                                        <option value="box">Box</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="flex mt-4 justify-end">
                                 <button type="button" class="btn-remove-item bg-red-600 text-white px-2 py-1 text-sm rounded hover:bg-red-700 transition-colors duration-150" style="background-color: #dc2626;">
@@ -152,7 +233,7 @@
             $(document).on('click', '.btn-remove-item-detail', function(e) {
                 e.preventDefault();
                 var id = $(this).data('id');
-                $('#'+id).remove();
+                $('#' + id).remove();
             });
 
 

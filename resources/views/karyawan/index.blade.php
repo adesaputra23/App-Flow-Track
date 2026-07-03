@@ -63,12 +63,15 @@
                             <td class="px-6 py-4 border border-gray-300">{{ $karyawan->jenis_kelamin }}</td>
                             <td class="px-6 py-4 border border-gray-300 text-center">{{ $karyawan->status }}</td>
                             <td class="px-6 py-4 border border-gray-300 text-center">
-                                <a href="{{ route('karyawan.edit', $karyawan->id) }}"
-                                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-3 transition-colors duration-150">Edit</a>
-                                <button id="btn-hapus" name="btn-hapus" data-id="{{ $karyawan->id }}"
-                                    data-nama="{{ $karyawan->nama_lengkap }}"
-                                    class="btn-hapus bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors duration-150">Hapus</button>
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    <a href="{{ route('karyawan.edit', $karyawan->id) }}"
+                                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-150 text-sm">Edit</a>
+                                    <button name="btn-hapus" data-id="{{ $karyawan->id }}"
+                                        data-nama="{{ $karyawan->nama_lengkap }}"
+                                        class="btn-hapus bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors duration-150 text-sm">Hapus</button>
+                                </div>
                             </td>
+                       
                         </tr>
                     @endforeach
 

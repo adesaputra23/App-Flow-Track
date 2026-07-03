@@ -3,11 +3,20 @@
  @endphp
  <nav class="pc-sidebar">
      <div class="navbar-wrapper">
-         <div class="m-header items-center py-4 px-6 h-header-height">
-             <a href="../dashboard/index.html" class="b-brand flex items-center gap-3">
+         <div class="m-header items-center py-4 px-6 h-header-height mb-4">
+             <a href="{{ url('/dashboard') }}" class="b-brand flex items-center gap-3">
                  <!-- ========   Change your logo from here   ============ -->
-                 <span class="text-2xl font-bold text-white">APP MONITORING</span>
+                 <div class="flex flex-col items-center">
+                     <div class="flex justify-center items-center w-full gap-4">
+                         <img src="{{ asset('assets/images/logo-pabrik.png') }}" alt="Logo" class="h-20 w-20 object-contain rounded p-0.5 mx-auto">
+                         <div class="flex flex-col items-start gap-0">
+                             <span class="text-2xl font-bold text-white mt-2">MONITORING</span>
+                             <span class="text-base font-semibold text-white mt-1">CV. Cakra Mas Jaya</span>
+                         </div>
+                     </div>
+                 </div>
              </a>
+        
          </div>
          <hr>
          <div class="navbar-content h-[calc(100vh_-_74px)] py-2.5">
@@ -28,44 +37,38 @@
                  {{-- Data Master --}}
                  @if (Auth::user()->role == 'admin' || Auth::user()->role == 'kepala_produksi')
                      <li class="pc-item pc-caption">
-                         <label>Data Master</label>
+                         <label>User dan Pegawai</label>
                          <i data-feather="feather"></i>
                      </li>
+                     <li class="pc-item pc-hasmenu">
+                        <a href="{{ route('karyawan.index') }}" class="pc-link">
+                            <span class="pc-micon"> <i data-feather="users"></i></span>
+                            <span class="pc-mtext">Karyawan</span>
+                        </a>
+                    </li>
                  @endif
 
                  @if (Auth::user()->role == 'admin')
                      <li class="pc-item pc-hasmenu">
-                         <a href="{{ route('karyawan.index') }}" class="pc-link">
-                             <span class="pc-micon"> <i data-feather="users"></i></span>
-                             <span class="pc-mtext">Karyawan</span>
-                         </a>
-                     </li>
-                 @endif
-
-                 @if (Auth::user()->role == 'admin' || Auth::user()->role == 'kepala_produksi')
-                     <li class="pc-item pc-hasmenu">
-                         <a href="{{ route('bahan.baku.index') }}" class="pc-link">
-                             <span class="pc-micon"> <i data-feather="more-horizontal"></i></span>
-                             <span class="pc-mtext">Bahan Produksi</span>
-                         </a>
-                     </li>
-                 @endif
-
-                 @if (Auth::user()->role == 'admin')
-                     <li class="pc-item pc-hasmenu">
-                         <a href="{{ route('set-role.index') }}" class="pc-link">
-                             <span class="pc-micon"> <i data-feather="user-check"></i></span>
-                             <span class="pc-mtext">Set Role</span>
-                         </a>
-                     </li>
+                        <a href="{{ route('set-role.index') }}" class="pc-link">
+                            <span class="pc-micon"> <i data-feather="user-check"></i></span>
+                            <span class="pc-mtext">Set Role</span>
+                        </a>
+                    </li>
                  @endif
 
                  {{-- data pesanan --}}
                  @if (Auth::user()->role == 'admin' || Auth::user()->role == 'kepala_produksi')
                      <li class="pc-item pc-caption">
-                         <label>Data Pesanan</label>
+                         <label>Pra Produksi</label>
                          <i data-feather="feather"></i>
                      </li>
+                     <li class="pc-item pc-hasmenu">
+                        <a href="{{ route('bahan.baku.index') }}" class="pc-link">
+                            <span class="pc-micon"> <i data-feather="more-horizontal"></i></span>
+                            <span class="pc-mtext">Bahan Produksi</span>
+                        </a>
+                    </li>
                      <li class="pc-item pc-hasmenu">
                          <a href="{{ route('pesanan.index') }}" class="pc-link">
                              <span class="pc-micon"> <i data-feather="shopping-cart"></i></span>
@@ -76,7 +79,7 @@
 
                  {{-- data produksi --}}
                  <li class="pc-item pc-caption">
-                     <label>Data Produksi</label>
+                     <label>Produksi</label>
                      <i data-feather="feather"></i>
                  </li>
                  <li class="pc-item pc-hasmenu">

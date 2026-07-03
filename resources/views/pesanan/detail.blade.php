@@ -36,6 +36,12 @@
                             Jenis</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
                             Jumlah</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
+                            Satuan
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
+                            Gambar
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -45,6 +51,16 @@
                                 <td class="px-6 py-4 border border-gray-300 text-center">{{ $i + 1 }}</td>
                                 <td class="px-6 py-4 border border-gray-300">{{ $detail->jenis }}</td>
                                 <td class="px-6 py-4 border border-gray-300 text-center">{{ $detail->jumlah }}</td>
+                                <td class="px-6 py-4 border border-gray-300 text-center">{{ $detail->satuan }}</td>
+                                <td class="px-6 py-4 border border-gray-300 text-center">
+                                    @if (!empty($detail->image))
+                                        <img src="{{ asset('storage/pesanan_gambar/' . $detail->image) }}" alt="Gambar" class="h-20 w-20 object-cover mx-auto rounded">
+                                   
+                                    @else
+                                        <span class="text-gray-400 italic">- Tidak ada gambar -</span>
+                                    @endif
+                                </td>
+                    
                             </tr>
                         @endforeach
                     @else

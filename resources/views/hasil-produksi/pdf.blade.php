@@ -5,6 +5,12 @@
     <meta charset="utf-8">
     <title>Data Hasil Produksi</title>
     <style>
+        /* Set landscape orientation for printing or PDF generation */
+        @page {
+            size: A4 landscape;
+            margin: 20mm 15mm 20mm 15mm;
+        }
+
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
@@ -66,6 +72,9 @@
                 <th>
                     Jenis</th>
                 <th>
+                    Gambar
+                </th>           
+                <th>
                     Jumlah</th>
                 <th>
                     Bahan Baku
@@ -87,7 +96,14 @@
                     <td class="text-center">{{ $data->kode }}</td>
                     <td class="text-center">{{ $data->detail_pesanan->pesanan->instansi }}</td>
                     <td class="text-center">{{ $data->detail_pesanan->jenis }}</td>
-                    <td class="text-center">{{ $data->detail_pesanan->jumlah }}</td>
+                    <td class="text-center">
+                        @if (!empty($data->detail_pesanan->image))
+                            <img src="{{ public_path('storage/pesanan_gambar/' . $data->detail_pesanan->image) }}" alt="Gambar" style="height: 40px; width: 40px; object-fit: cover; border-radius: 6px;">
+                        @else
+                            <span style="color: #aaa; font-style: italic;">- Tidak ada gambar -</span>
+                        @endif
+                    </td>               
+                    <td class="text-center">{{ $data->detail_pesanan->jumlah }} {{ ($data->detail_pesanan->satuan ?? '') }}</td>
                     <td class="text-center">
                         <ul class="">
                             @forelse ($data->detail_bahan_baku as $key => $detail)

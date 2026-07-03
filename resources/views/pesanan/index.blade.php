@@ -26,7 +26,7 @@
             </div>
         @endif
 
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table id="table" class="w-full divide-y divide-gray-200 bg-white shadow rounded border border-gray-400">
                 <thead class="bg-gray-100">
                     <tr>
@@ -60,16 +60,19 @@
                             <td class="px-6 py-4 border border-gray-300 text-center">{{ $data->created_at->format('Y-m-d') }}</td>
                             <td class="px-6 py-4 border border-gray-300">{{ $data->status == 1 ? 'proses' : 'selsai' }}</td>
                             <td class="px-6 py-4 border border-gray-300 text-center">
-                                <a href="{{ route('pesanan.edit', $data->id) }}"
-                                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-3 transition-colors duration-150">Edit</a>
-                                <button id="btn-hapus" name="btn-hapus" data-id="{{ $data->id }}"
-                                    data-nama="{{ $data->instansi }}"
-                                    class="btn-hapus bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mr-3 transition-colors duration-150">Hapus</button>
-                                <a href="{{ route('pesanan.detail', $data->id) }}"
-                                    class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-3 transition-colors duration-150">Detail</a>
-                                <a href="{{ route('pesanan.add.item', $data->id) }}"
-                                    class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition-colors duration-150">Tambah Item</a>
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    <a href="{{ route('pesanan.edit', $data->id) }}"
+                                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-150 text-sm">Edit</a>
+                                    <button name="btn-hapus" data-id="{{ $data->id }}"
+                                        data-nama="{{ $data->instansi }}"
+                                        class="btn-hapus bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors duration-150 text-sm">Hapus</button>
+                                    <a href="{{ route('pesanan.detail', $data->id) }}"
+                                        class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors duration-150 text-sm">Detail</a>
+                                    <a href="{{ route('pesanan.add.item', $data->id) }}"
+                                        class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition-colors duration-150 text-sm">Tambah Item</a>
+                                </div>
                             </td>
+                       
                         </tr>
                     @endforeach
                 </tbody>
@@ -82,7 +85,9 @@
     <script>
         $(document).ready(function() {
 
-            $('#table').DataTable();
+            $('#table').DataTable({
+                responsive: true
+            });
 
             // Ganti id dengan class karena id harus unik!
             $('.btn-hapus').on('click', function(e) {

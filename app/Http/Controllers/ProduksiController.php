@@ -109,13 +109,13 @@ class ProduksiController extends Controller
                     ->where('id_produksi', $produksi->id)
                     ->get();
 
-                if ($cekData) {
-                    DB::table('detail_produksi_bahan_baku')
-                        ->where('id_produksi', $produksi->id)
-                        ->delete();
-                }
+                    if ($cekData) {
+                        DB::table('detail_produksi_bahan_baku')
+                            ->where('id_produksi', $produksi->id)
+                            ->delete();
+                    }
 
-                foreach ($request->id_bahan as $id_bahan) {
+                foreach ($request->id_bahan as $key => $id_bahan) {
                     DB::table('detail_produksi_bahan_baku')->insert([
                         'id_produksi' => $produksi->id,
                         'id_bahan_baku' => $id_bahan,
@@ -124,11 +124,16 @@ class ProduksiController extends Controller
                         'updated_at' => now(),
                     ]);
                     $bahan_baku = BahanBaku::where('id', $id_bahan)->first();
-                    if (isset($request->id)) {
-                        $bahan_baku->stok = (($bahan_baku->stok + $produksi->jumlah_bahan) - $request->jumlah_bahan[$id_bahan]);
-                    }else{
-                        $bahan_baku->stok = ($bahan_baku->stok - $request->jumlah_bahan[$id_bahan]);
+                    if (isset($request->id) && isset($cekData[$key])) {
+                        if ($cekData[$key]->jumlah_bahan == $request->jumlah_bahan[$id_bahan]) {
+                            // stok tidak berubah
+                        } else {
+                            $bahan_baku->stok = $bahan_baku->stok + $cekData[$key]->jumlah_bahan - $request->jumlah_bahan[$id_bahan];
+                        }
+                    } else {
+                        $bahan_baku->stok = $bahan_baku->stok - $request->jumlah_bahan[$id_bahan];
                     }
+         
 
                     if ($bahan_baku->stok < 0) {
                         return redirect()->route('produksi.index')->with('error', 'Data Stok Bahan Baku '. $bahan_baku->nama_bahan. ' Tidak Tersedia.');

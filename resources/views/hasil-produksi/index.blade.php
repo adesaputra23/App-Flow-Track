@@ -62,6 +62,9 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
                             Jenis</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
+                            Gambar
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase border border-gray-300">
                             Jumlah</th>
                         <th class="px-6 py-3 text-xs font-medium text-gray-600 uppercase border border-gray-300 text-center">
                             Bahan Baku
@@ -83,7 +86,14 @@
                             <td class="px-6 py-4 border border-gray-300">{{ $data->kode }}</td>
                             <td class="px-6 py-4 border border-gray-300">{{ ($data->detail_pesanan->pesanan->instansi) }}</td>
                             <td class="px-6 py-4 border border-gray-300">{{ ($data->detail_pesanan->jenis) }}</td>
-                            <td class="px-6 py-4 border border-gray-300">{{ ($data->detail_pesanan->jumlah) }}</td>
+                            <td class="px-6 py-4 border border-gray-300 text-center">
+                                @if (!empty($data->detail_pesanan->image))
+                                    <img src="{{ asset('storage/pesanan_gambar/' . $data->detail_pesanan->image) }}" alt="Gambar" class="h-10 w-10 object-cover mx-auto rounded">
+                                @else
+                                    <span class="text-gray-400 italic">- Tidak ada gambar -</span>
+                                @endif
+                            </td>                       
+                            <td class="px-6 py-4 border border-gray-300">{{ ($data->detail_pesanan->jumlah) }} {{ ($data->detail_pesanan->satuan ?? '') }} </td>
                             <td class="px-6 py-4 border border-gray-300">
                                 <ul class="">
                                     @forelse ($data->detail_bahan_baku as $key => $detail)
