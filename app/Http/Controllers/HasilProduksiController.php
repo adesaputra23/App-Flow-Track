@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Packing;
 use App\Models\Pesanan;
 use App\Models\Produksi;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -30,13 +31,16 @@ class HasilProduksiController extends Controller
     public function index(Request $request)
     {
 
-        $list_data = Produksi::with('bahan_baku')->with(['detail_pesanan' => function ($query) {
-            return $query->with('pesanan');
-        }]);
+        $list_data = Packing::with('produksi', 'karyawan')
+        ->with('produksi');
+        
+        // Produksi::with('bahan_baku')->with(['detail_pesanan' => function ($query) {
+        //     return $query->with('pesanan');
+        // }]);
         
         if ($request->has('tanggal_awal') && $request->has('tanggal_akhir')) {
-            $list_data = $list_data->whereDate('tanggal', '>=', $request->tanggal_awal)
-                                   ->whereDate('tanggal', '<=', $request->tanggal_akhir);
+            $list_data = $list_data->whereDate('created_at', '>=', $request->tanggal_awal)
+                                   ->whereDate('created_at', '<=', $request->tanggal_akhir);
         }
 
         $list_data = $list_data->get();
@@ -118,13 +122,12 @@ class HasilProduksiController extends Controller
     public function cetakPDF(Request $request)
     {
 
-        $list_data = Produksi::with('bahan_baku')->with(['detail_pesanan' => function ($query) {
-            return $query->with('pesanan');
-        }]);
+        $list_data = Packing::with('produksi', 'karyawan')
+        ->with('produksi');
         
         if ($request->has('tanggal_awal') && $request->has('tanggal_akhir')) {
-            $list_data = $list_data->whereDate('tanggal', '>=', $request->tanggal_awal)
-                                   ->whereDate('tanggal', '<=', $request->tanggal_akhir);
+            $list_data = $list_data->whereDate('created_at', '>=', $request->tanggal_awal)
+                                   ->whereDate('created_at', '<=', $request->tanggal_akhir);
         }
 
         $list_data = $list_data->get();

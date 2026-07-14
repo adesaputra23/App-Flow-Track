@@ -57,11 +57,14 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @foreach ($list_data as $i => $data)
+                        @php
+                            $dataScann = "Pesanan: {$data->produksi->detail_pesanan->pesanan->nama}, Instansi: {$data->produksi->detail_pesanan->pesanan->instansi}, Jenis Pesanan: {$data->produksi->detail_pesanan->jenis}, Jumlah: {$data->produksi->detail_pesanan->jumlah}";
+                        @endphp
                         <tr>
                             <td class="px-6 py-4 border border-gray-300 text-center">{{ $i + 1 }}</td>
                             <td class="px-6 py-4 border border-gray-300 text-center">
                                 <button class="btn-download-qr"
-                                    data-qr-url="https://api.qrserver.com/v1/create-qr-code/?size=380x380&data=QR-PACKING-ID:{{ $data->id }}"
+                                    data-qr-url="https://api.qrserver.com/v1/create-qr-code/?size=380x380&data={{ $dataScann }}"
                                     data-qr-filename="qr_packing_{{ $data->produksi->detail_pesanan->jenis }}_{{ $data->id }}.png">
                                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=User-ID:{{ $data->id }}"
                                         alt="QR Code ID {{ $data->id }}" style="width:48px; height:48px;">
